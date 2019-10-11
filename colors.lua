@@ -13,27 +13,6 @@ local colors = {
 	health = {49 / 255, 207 / 255, 37 / 255},
 	disconnected = {0.6, 0.6, 0.6},
 	tapped = {0.6, 0.6, 0.6},
-	runes = {
-		{247 / 255, 65 / 255, 57 / 255}, -- blood
-		{148 / 255, 203 / 255, 247 / 255}, -- frost
-		{173 / 255, 235 / 255, 66 / 255}, -- unholy
-	},
-	selection = {
-		[ 0] = {255 / 255, 0 / 255, 0 / 255}, -- HOSTILE
-		[ 1] = {255 / 255, 129 / 255, 0 / 255}, -- UNFRIENDLY
-		[ 2] = {255 / 255, 255 / 255, 0 / 255}, -- NEUTRAL
-		[ 3] = {0 / 255, 255 / 255, 0 / 255}, -- FRIENDLY
-		[ 4] = {0 / 255, 0 / 255, 255 / 255}, -- PLAYER_SIMPLE
-		[ 5] = {96 / 255, 96 / 255, 255 / 255}, -- PLAYER_EXTENDED
-		[ 6] = {170 / 255, 170 / 255, 255 / 255}, -- PARTY
-		[ 7] = {170 / 255, 255 / 255, 170 / 255}, -- PARTY_PVP
-		[ 8] = {83 / 255, 201 / 255, 255 / 255}, -- FRIEND
-		[ 9] = {128 / 255, 128 / 255, 128 / 255}, -- DEAD
-		-- [10] = {}, -- COMMENTATOR_TEAM_1, unavailable to players
-		-- [11] = {}, -- COMMENTATOR_TEAM_2, unavailable to players
-		[12] = {255 / 255, 255 / 255, 139 / 255}, -- SELF, buggy
-		[13] = {0 / 255, 153 / 255, 0 / 255}, -- BATTLEGROUND_FRIENDLY_PVP
-	},
 	class = {},
 	debuff = {},
 	reaction = {},
@@ -84,37 +63,17 @@ for eclass, color in next, FACTION_BAR_COLORS do
 	colors.reaction[eclass] = {color.r, color.g, color.b}
 end
 
-for power, color in next, PowerBarColor do
-	if (type(power) == 'string') then
-		if(type(select(2, next(color))) == 'table') then
-			colors.power[power] = {}
-
-			for index, color in next, color do
-				colors.power[power][index] = {color.r, color.g, color.b}
-			end
-		else
-			colors.power[power] = {color.r, color.g, color.b, atlas = color.atlas}
-		end
-	end
+for _, power in next, {'MANA', 'RAGE', 'FOCUS', 'ENERGY', 'HAPPINESS', 'COMBO_POINTS'} do
+	local color = PowerBarColor[power]
+	colors.power[power] = {color.r, color.g, color.b, atlas = color.atlas}
 end
 
--- sourced from FrameXML/Constants.lua
 colors.power[0] = colors.power.MANA
 colors.power[1] = colors.power.RAGE
 colors.power[2] = colors.power.FOCUS
 colors.power[3] = colors.power.ENERGY
-colors.power[4] = colors.power.COMBO_POINTS
-colors.power[5] = colors.power.RUNES
-colors.power[6] = colors.power.RUNIC_POWER
-colors.power[7] = colors.power.SOUL_SHARDS
-colors.power[8] = colors.power.LUNAR_POWER
-colors.power[9] = colors.power.HOLY_POWER
-colors.power[11] = colors.power.MAELSTROM
-colors.power[12] = colors.power.CHI
-colors.power[13] = colors.power.INSANITY
-colors.power[16] = colors.power.ARCANE_CHARGES
-colors.power[17] = colors.power.FURY
-colors.power[18] = colors.power.PAIN
+colors.power[4] = colors.power.HAPPINESS
+colors.power[14] = colors.power.COMBO_POINTS
 
 local function colorsAndPercent(a, b, ...)
 	if(a <= 0 or b == 0) then
