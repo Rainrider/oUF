@@ -18,7 +18,7 @@ At least one of the above widgets must be present for the element to work.
 .disableMouse       - Disables mouse events (boolean)
 .disableCooldown    - Disables the cooldown spiral (boolean)
 .size               - Aura icon size. Defaults to 16 (number)
-.onlyShowPlayer     - Shows only auras created by player/vehicle (boolean)
+.onlyShowPlayer     - Shows only auras created by the player (boolean)
 .showStealableBuffs - Displays the stealable texture on buffs that can be stolen (boolean)
 .spacing            - Spacing between each icon. Defaults to 0 (number)
 .['spacing-x']      - Horizontal spacing between each icon. Takes priority over `spacing` (number)
@@ -54,7 +54,7 @@ At least one of the above widgets must be present for the element to work.
 button.caster   - the unit who cast the aura (string)
 button.filter   - the filter list used to determine the visibility of the aura (string)
 button.isDebuff - indicates if the button holds a debuff (boolean)
-button.isPlayer - indicates if the aura caster is the player or their vehicle (boolean)
+button.isPlayer - indicates if the aura caster is the player (boolean)
 
 ## Examples
 
@@ -171,7 +171,7 @@ local function updateIcon(element, unit, index, offset, filter, isDebuff, visibl
 		button.caster = caster
 		button.filter = filter
 		button.isDebuff = isDebuff
-		button.isPlayer = caster == 'player' or caster == 'vehicle'
+		button.isPlayer = caster == 'player'
 
 		--[[ Override: Auras:CustomFilter(unit, button, ...)
 		Defines a custom filter that controls if the aura button should be shown.
