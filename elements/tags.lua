@@ -97,24 +97,6 @@ local tagStrings = {
 		end
 	end]],
 
-	['arcanecharges'] = [[function()
-		if(GetSpecialization() == SPEC_MAGE_ARCANE) then
-			local num = UnitPower('player', Enum.PowerType.ArcaneCharges)
-			if(num > 0) then
-				return num
-			end
-		end
-	end]],
-
-	['chi'] = [[function()
-		if(GetSpecialization() == SPEC_MONK_WINDWALKER) then
-			local num = UnitPower('player', Enum.PowerType.Chi)
-			if(num > 0) then
-				return num
-			end
-		end
-	end]],
-
 	['classification'] = [[function(u)
 		local c = UnitClassification(u)
 		if(c == 'rare') then
@@ -180,15 +162,6 @@ local tagStrings = {
 			local raidName, _, group = GetRaidRosterInfo(i)
 			if( raidName == name ) then
 				return group
-			end
-		end
-	end]],
-
-	['holypower'] = [[function()
-		if(GetSpecialization() == SPEC_PALADIN_RETRIBUTION) then
-			local num = UnitPower('player', Enum.PowerType.HolyPower)
-			if(num > 0) then
-				return num
 			end
 		end
 	end]],
@@ -313,19 +286,6 @@ local tagStrings = {
 		end
 	end]],
 
-	['runes'] = [[function()
-		local amount = 0
-
-		for i = 1, 6 do
-			local _, _, ready = GetRuneCooldown(i)
-			if(ready) then
-				amount = amount + 1
-			end
-		end
-
-		return amount
-	end]],
-
 	['sex'] = [[function(u)
 		local s = UnitSex(u)
 		if(s == 2) then
@@ -370,13 +330,6 @@ local tagStrings = {
 			else
 				return level
 			end
-		end
-	end]],
-
-	['soulshards'] = [[function()
-		local num = UnitPower('player', Enum.PowerType.SoulShards)
-		if(num > 0) then
-			return num
 		end
 	end]],
 
@@ -457,8 +410,6 @@ _ENV._VARS = vars
 
 local tagEvents = {
 	['affix']               = 'UNIT_CLASSIFICATION_CHANGED',
-	['arcanecharges']       = 'UNIT_POWER_UPDATE PLAYER_TALENT_UPDATE',
-	['chi']                 = 'UNIT_POWER_UPDATE PLAYER_TALENT_UPDATE',
 	['classification']      = 'UNIT_CLASSIFICATION_CHANGED',
 	['cpoints']             = 'UNIT_POWER_FREQUENT PLAYER_TARGET_CHANGED',
 	['curhp']               = 'UNIT_HEALTH UNIT_MAXHEALTH',
@@ -469,7 +420,6 @@ local tagEvents = {
 	['difficulty']          = 'UNIT_FACTION',
 	['faction']             = 'NEUTRAL_FACTION_SELECT_RESULT',
 	['group']               = 'GROUP_ROSTER_UPDATE',
-	['holypower']           = 'UNIT_POWER_UPDATE PLAYER_TALENT_UPDATE',
 	['leader']              = 'PARTY_LEADER_CHANGED',
 	['leaderlong']          = 'PARTY_LEADER_CHANGED',
 	['level']               = 'UNIT_LEVEL PLAYER_LEVEL_UP',
@@ -487,10 +437,8 @@ local tagEvents = {
 	['pvp']                 = 'UNIT_FACTION',
 	['rare']                = 'UNIT_CLASSIFICATION_CHANGED',
 	['resting']             = 'PLAYER_UPDATE_RESTING',
-	['runes']               = 'RUNE_POWER_UPDATE',
 	['shortclassification'] = 'UNIT_CLASSIFICATION_CHANGED',
 	['smartlevel']          = 'UNIT_LEVEL PLAYER_LEVEL_UP UNIT_CLASSIFICATION_CHANGED',
-	['soulshards']          = 'UNIT_POWER_UPDATE',
 	['status']              = 'UNIT_HEALTH PLAYER_UPDATE_RESTING UNIT_CONNECTION',
 }
 
@@ -501,7 +449,6 @@ local unitlessEvents = {
 	PLAYER_LEVEL_UP = true,
 	PLAYER_TARGET_CHANGED = true,
 	PLAYER_UPDATE_RESTING = true,
-	RUNE_POWER_UPDATE = true,
 }
 
 local events = {}
