@@ -220,50 +220,6 @@ local function UNIT_SPELLCAST_INTERRUPTED(self, event, unit, castID)
 	end
 end
 
-local function UNIT_SPELLCAST_INTERRUPTIBLE(self, event, unit)
-	if(self.unit ~= unit and self.realUnit ~= unit) then return end
-
-	local element = self.Castbar
-	local shield = element.Shield
-	if(shield) then
-		shield:Hide()
-	end
-
-	element.notInterruptible = nil
-
-	--[[ Callback: Castbar:PostCastInterruptible(unit)
-	Called after the element has been updated when a spell cast has become interruptible.
-
-	* self - the Castbar widget
-	* unit - unit for which the update has been triggered (string)
-	--]]
-	if(element.PostCastInterruptible) then
-		return element:PostCastInterruptible(unit)
-	end
-end
-
-local function UNIT_SPELLCAST_NOT_INTERRUPTIBLE(self, event, unit)
-	if(self.unit ~= unit and self.realUnit ~= unit) then return end
-
-	local element = self.Castbar
-	local shield = element.Shield
-	if(shield) then
-		shield:Show()
-	end
-
-	element.notInterruptible = true
-
-	--[[ Callback: Castbar:PostCastNotInterruptible(unit)
-	Called after the element has been updated when a spell cast has become non-interruptible.
-
-	* self - the Castbar widget
-	* unit - unit for which the update has been triggered (string)
-	--]]
-	if(element.PostCastNotInterruptible) then
-		return element:PostCastNotInterruptible(unit)
-	end
-end
-
 local function UNIT_SPELLCAST_DELAYED(self, event, unit)
 	if(self.unit ~= unit and self.realUnit ~= unit) then return end
 
@@ -539,8 +495,6 @@ local function Enable(self, unit)
 			self:RegisterEvent('UNIT_SPELLCAST_FAILED', UNIT_SPELLCAST_FAILED)
 			self:RegisterEvent('UNIT_SPELLCAST_STOP', UNIT_SPELLCAST_STOP)
 			self:RegisterEvent('UNIT_SPELLCAST_INTERRUPTED', UNIT_SPELLCAST_INTERRUPTED)
-			self:RegisterEvent('UNIT_SPELLCAST_INTERRUPTIBLE', UNIT_SPELLCAST_INTERRUPTIBLE)
-			self:RegisterEvent('UNIT_SPELLCAST_NOT_INTERRUPTIBLE', UNIT_SPELLCAST_NOT_INTERRUPTIBLE)
 			self:RegisterEvent('UNIT_SPELLCAST_DELAYED', UNIT_SPELLCAST_DELAYED)
 			self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_START', UNIT_SPELLCAST_CHANNEL_START)
 			self:RegisterEvent('UNIT_SPELLCAST_CHANNEL_UPDATE', UNIT_SPELLCAST_CHANNEL_UPDATE)
