@@ -23,11 +23,11 @@ OnEnter and OnLeave script handlers will be set to display a Tooltip if the `Tot
 ## Examples
 
     local Totems = {}
-    for index = 1, 5 do
+    for index = 1, MAX_TOTEMS do
         -- Position and size of the totem indicator
         local Totem = CreateFrame('Button', nil, self)
         Totem:SetSize(40, 40)
-        Totem:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', index * Totem:GetWidth(), 0)
+        Totem:SetPoint('TOPLEFT', self, 'BOTTOMLEFT', (index - 1) * Totem:GetWidth(), 0)
 
         local Icon = Totem:CreateTexture(nil, 'OVERLAY')
         Icon:SetAllPoints()
@@ -48,8 +48,26 @@ OnEnter and OnLeave script handlers will be set to display a Tooltip if the `Tot
 local _, ns = ...
 local oUF = ns.oUF
 
+local _, playerClass = UnitClass('player')
+local priorities = playerClass == 'SHAMAN' and SHAMAN_TOTEM_PRIORITIES or STANDARD_TOTEM_PRIORITIES
+
 local function UpdateTooltip(self)
-	GameTooltip:SetTotem(self:GetID())
+	local timeLeft = self.expiration - GetTime()
+	if(timeLeft <= 0) then return end
+
+	local fmt, value = SecondsToTimeAbbrev(timeLeft)
+	local timeUnit = fmt:match('.$')
+	local time
+
+	if(timeUnit == 'm') then
+		time = SPELL_TIME_REMAINING_MIN:format(value)
+	else
+		time = SPELL_TIME_REMAINING_SEC:format(timeLeft)
+	end
+
+	GameTooltip:SetText(self.name)
+	GameTooltip:AddLine(time, 1, 1, 1)
+	GameTooltip:Show()
 end
 
 local function OnEnter(self)
@@ -75,7 +93,7 @@ local function UpdateTotem(self, event, slot)
 	--]]
 	if(element.PreUpdate) then element:PreUpdate(slot) end
 
-	local totem = element[slot]
+	local totem = element[priorities[slot]]
 	local haveTotem, name, start, duration, icon = GetTotemInfo(slot)
 	if(haveTotem and duration > 0) then
 		if(totem.Icon) then
@@ -86,6 +104,8 @@ local function UpdateTotem(self, event, slot)
 			totem.Cooldown:SetCooldown(start, duration)
 		end
 
+		totem.name = name
+		totem.expiration = start + duration
 		totem:Show()
 	else
 		totem:Hide()
@@ -118,9 +138,13 @@ local function Path(self, ...)
 	return (self.Totems.Override or UpdateTotem) (self, ...)
 end
 
-local function Update(self, event)
-	for i = 1, #self.Totems do
-		Path(self, event, i)
+local function Update(self, event, slot)
+	if(tonumber(slot)) then
+		Path(self, event, slot)
+	else
+		for i = 1, #self.Totems do
+			Path(self, event, i)
+		end
 	end
 end
 
@@ -136,8 +160,6 @@ local function Enable(self)
 
 		for i = 1, #element do
 			local totem = element[i]
-
-			totem:SetID(i)
 
 			if(totem:IsMouseEnabled()) then
 				totem:SetScript('OnEnter', OnEnter)
@@ -156,11 +178,6 @@ local function Enable(self)
 
 		self:RegisterEvent('PLAYER_TOTEM_UPDATE', Path, true)
 
-		TotemFrame:UnregisterEvent('PLAYER_TOTEM_UPDATE')
-		TotemFrame:UnregisterEvent('PLAYER_ENTERING_WORLD')
-		TotemFrame:UnregisterEvent('UPDATE_SHAPESHIFT_FORM')
-		TotemFrame:UnregisterEvent('PLAYER_TALENT_UPDATE')
-
 		return true
 	end
 end
@@ -171,11 +188,6 @@ local function Disable(self)
 		for i = 1, #element do
 			element[i]:Hide()
 		end
-
-		TotemFrame:RegisterEvent('PLAYER_TOTEM_UPDATE')
-		TotemFrame:RegisterEvent('PLAYER_ENTERING_WORLD')
-		TotemFrame:RegisterEvent('UPDATE_SHAPESHIFT_FORM')
-		TotemFrame:RegisterEvent('PLAYER_TALENT_UPDATE')
 
 		self:UnregisterEvent('PLAYER_TOTEM_UPDATE', Path)
 	end
