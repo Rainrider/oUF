@@ -72,7 +72,7 @@ The following options are listed by priority. The first check that returns true 
     Background.multiplier = .5
 
     -- Register it with oUF
-	Health.bg = Background
+    Health.bg = Background
     self.Health = Health
 --]]
 
